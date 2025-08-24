@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Beranda - Sistem Manajemen Pasien{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">Selamat Datang di Sistem Manajemen Pasien</h1>
+    <p class="text-xl text-gray-600 mb-8">Aplikasi untuk mengelola data pasien dengan mudah dan efisien</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="text-3xl mb-2">👥</div>
+            <h3 class="text-lg font-semibold mb-2">Kelola Pasien</h3>
+            <p class="text-gray-600">Tambah, edit, dan hapus data pasien dengan mudah</p>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="text-3xl mb-2">📊</div>
+            <h3 class="text-lg font-semibold mb-2">Dashboard</h3>
+            <p class="text-gray-600">Lihat statistik dan laporan pasien secara real-time</p>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="text-3xl mb-2">🔐</div>
+            <h3 class="text-lg font-semibold mb-2">Keamanan</h3>
+            <p class="text-gray-600">Sistem login dan role-based access control</p>
+        </div>
+    </div>
+    
+    <div class="space-x-4">
+        <a href="/patients" class="inline-block bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-secondary transition-colors">
+            Kelola Pasien
+        </a>
+        <a href="/dashboard" class="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors">
+            Lihat Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

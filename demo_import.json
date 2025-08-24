@@ -1,0 +1,28 @@
+{
+  "patients": [
+    {
+      "nama": "John Doe",
+      "tanggal_lahir": "1985-03-15",
+      "tanggal_kunjungan": "2024-01-25",
+      "diagnosis": "Sakit kepala",
+      "tindakan": "Pemberian obat pereda nyeri",
+      "dokter": "Dr. Sarah"
+    },
+    {
+      "nama": "Jane Smith",
+      "tanggal_lahir": "1992-07-22",
+      "tanggal_kunjungan": "2024-01-26",
+      "diagnosis": "Demam",
+      "tindakan": "Pemberian antipiretik",
+      "dokter": "Dr. Budi"
+    },
+    {
+      "nama": "Michael Johnson",
+      "tanggal_lahir": "1978-11-08",
+      "tanggal_kunjungan": "2024-01-27",
+      "diagnosis": "Tekanan darah tinggi",
+      "tindakan": "Kontrol tekanan darah",
+      "dokter": "Dr. Sarah"
+    }
+  ]
+}

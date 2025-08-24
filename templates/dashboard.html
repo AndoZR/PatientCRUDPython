@@ -1,0 +1,212 @@
+{% extends "base_auth.html" %}
+
+{% block title %}Dashboard - Sistem Manajemen Pasien{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="text-2xl">👥</div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Total Pasien</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ total_patients }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="text-2xl">📅</div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Pasien Hari Ini</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ today_patients }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="text-2xl">🏥</div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Rumah Sakit</dt>
+                            <dd class="text-lg font-medium text-gray-900">Aktif</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="text-2xl">📊</div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Status Sistem</dt>
+                            <dd class="text-lg font-medium text-green-600">Online</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Export/Import Section -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Import/Export Data</h3>
+        <div class="flex space-x-4">
+            <button onclick="exportData()" class="bg-success text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
+                📥 Export ke Excel
+            </button>
+            <button onclick="showImportForm()" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition-colors">
+                📤 Import Data
+            </button>
+        </div>
+        
+        <!-- Import Form (Hidden by default) -->
+        <div id="importForm" class="hidden mt-4 p-4 bg-gray-50 rounded-md">
+            <h4 class="font-medium mb-2">Import Data Pasien (JSON)</h4>
+            <textarea id="importData" rows="4" class="w-full p-2 border rounded-md" placeholder='[{"nama": "John Doe", "tanggal_lahir": "1990-01-01", "tanggal_kunjungan": "2024-01-15"}]'></textarea>
+            <button onclick="importData()" class="mt-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition-colors">
+                Import
+            </button>
+        </div>
+    </div>
+    
+    <!-- Patients Table -->
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">Laporan Pasien</h3>
+                <div class="flex space-x-2">
+                    <input type="text" id="searchInput" placeholder="Cari nama..." 
+                           class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+                    <input type="date" id="dateFilter" 
+                           class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+                </div>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Lahir</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Kunjungan</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diagnosis</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tindakan</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dokter</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="patientsTableBody">
+                    {% for patient in patients %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ patient.id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ patient.nama }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ patient.tanggal_lahir.strftime('%d/%m/%Y') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ patient.tanggal_kunjungan.strftime('%d/%m/%Y') }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{{ patient.diagnosis or '-' }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{{ patient.tindakan or '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ patient.dokter or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">Tidak ada data pasien</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function exportData() {
+    fetch('/api/export')
+        .then(response => response.json())
+        .then(data => {
+            const link = document.createElement('a');
+            link.href = data.download_url;
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        })
+        .catch(error => {
+            alert('Error exporting data: ' + error);
+        });
+}
+
+function showImportForm() {
+    const form = document.getElementById('importForm');
+    form.classList.toggle('hidden');
+}
+
+function importData() {
+    const data = document.getElementById('importData').value;
+    try {
+        const patients = JSON.parse(data);
+        
+        fetch('/api/import', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ patients: patients })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            location.reload();
+        })
+        .catch(error => {
+            alert('Error importing data: ' + error);
+        });
+    } catch (error) {
+        alert('Invalid JSON format: ' + error);
+    }
+}
+
+// Search and filter functionality
+document.getElementById('searchInput').addEventListener('input', filterTable);
+document.getElementById('dateFilter').addEventListener('change', filterTable);
+
+function filterTable() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const dateFilter = document.getElementById('dateFilter').value;
+    const rows = document.querySelectorAll('#patientsTableBody tr');
+    
+    rows.forEach(row => {
+        const name = row.cells[1]?.textContent.toLowerCase() || '';
+        const visitDate = row.cells[3]?.textContent || '';
+        
+        const matchesSearch = name.includes(searchTerm);
+        const matchesDate = !dateFilter || visitDate.includes(dateFilter);
+        
+        row.style.display = matchesSearch && matchesDate ? '' : 'none';
+    });
+}
+</script>
+{% endblock %}
